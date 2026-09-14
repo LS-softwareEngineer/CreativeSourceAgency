@@ -1,0 +1,10 @@
+{
+  "description": "This vibrant platform offers expert financial leadership and royalty accounting tailored for the music industry, ensuring accurate tracking and insightful reporting for record labels and distributors.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
