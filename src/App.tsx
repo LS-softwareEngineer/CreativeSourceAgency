@@ -14,7 +14,7 @@ function Nav() {
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-50 px-5 md:px-10 py-4"
+      className="fixed top-0 left-0 right-0 z-50 px-3 sm:px-5 md:px-10 py-3 sm:py-4 overflow-x-hidden"
       style={{
         background: "transparent",
       }}
@@ -39,10 +39,10 @@ function Nav() {
           <img
             src={logo}
             alt="Creative Source Agency logo"
-            className="w-10 h-10 object-cover"
+            className="w-8 h-8 sm:w-10 sm:h-10 object-cover shrink-0"
           />
           <span
-            className="uppercase text-sm md:text-base"
+            className="uppercase text-[11px] sm:text-sm md:text-base whitespace-nowrap"
             style={{
               color: COLORS.sonic,
               fontWeight: 700,
@@ -72,7 +72,7 @@ function Nav() {
         </ul>
 
         <button
-          className="md:hidden flex flex-col gap-1.5 p-2"
+          className="md:hidden flex flex-col gap-1.5 p-1.5 ml-2 shrink-0"
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
         >
@@ -84,7 +84,7 @@ function Nav() {
 
       {open && (
         <div
-          className="md:hidden absolute top-full left-0 right-0 px-5 py-8 border-b flex flex-col gap-5"
+          className="md:hidden absolute top-full left-0 right-0 w-full max-h-[calc(100vh-64px)] overflow-y-auto px-4 py-6 border-b flex flex-col gap-4 box-border"
           style={{
             background: COLORS.blue,
             borderColor: "#F2552C",
@@ -169,7 +169,7 @@ function RotatingHeroHeadline() {
   };
 
   const headlineStyle = {
-    fontSize: "clamp(4.7rem, 13vw, 13rem)",
+    fontSize: "clamp(3rem, 12vw, 13rem)",
     fontWeight: 700,
     marginLeft: 0,
     paddingLeft: 0,
@@ -348,7 +348,7 @@ function Hero() {
   return (
     <section
       id="top"
-      className="min-h-[70vh] md:min-h-screen flex flex-col justify-between pt-24 px-5 md:px-10 pb-4 md:pb-7"
+      className="min-h-[68vh] md:min-h-screen flex flex-col justify-between pt-20 sm:pt-24 px-3 sm:px-5 md:px-10 pb-4 md:pb-7"
       style={{ background: COLORS.blue }}
     >
       <div className="pt-6">
@@ -426,22 +426,22 @@ function StatementStrip() {
 
   return (
     <section
-      className="relative overflow-visible px-5 md:px-10 pt-0 md:pt-1 pb-1 md:pb-2 z-10"
+      className="relative overflow-visible px-3 sm:px-5 md:px-10 pt-0 md:pt-1 pb-10 sm:pb-14 md:pb-16 z-10"
       style={{
         background: "transparent",
         minHeight: "260px",
       }}
     >
-      <div className="relative w-full h-[190px] md:h-[310px] -translate-y-1 md:-translate-y-4">
+      <div className="relative w-full h-[190px] sm:h-[220px] md:h-[280px] -translate-y-1 md:-translate-y-3">
         {items.map((item, index) => {
           const motion = motions[index];
           const basePositions = [
             { left: "-2%", top: "-2%" },
             { left: "28%", top: "-7%" },
             { left: "64%", top: "0%" },
-            { left: "8%", top: "50%" },
-            { left: "40%", top: "46%" },
-            { left: "76%", top: "52%" },
+            { left: "8%", top: "40%" },
+            { left: "40%", top: "36%" },
+            { left: "76%", top: "42%" },
           ];
 
           const pos = basePositions[index];
@@ -456,7 +456,7 @@ function StatementStrip() {
               style={{
                 left: pos.left,
                 top: pos.top,
-                width: "clamp(105px, 19vw, 275px)",
+                width: "clamp(92px, 22vw, 275px)",
                 aspectRatio: "1 / 1",
                 transform: `translate(${x}px, ${y}px) rotate(${rotate}deg)`,
                 background: "#F2552C",
@@ -470,7 +470,7 @@ function StatementStrip() {
                 className="uppercase leading-tight"
                 style={{
                   fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: "clamp(0.65rem, 1.7vw, 1.55rem)",
+                  fontSize: "clamp(0.58rem, 2.2vw, 1.55rem)",
                   fontWeight: 600,
                   letterSpacing: "0.04em",
                 }}
@@ -568,10 +568,10 @@ function About() {
     <section
       id="about"
       style={{ background: COLORS.blue, position: "relative", zIndex: 5 }}
-      className="px-5 md:px-10 pt-20 md:pt-28 pb-24 md:pb-36 -mt-8 md:-mt-12"
+      className="px-3 sm:px-5 md:px-10 pt-24 sm:pt-28 md:pt-36 pb-20 sm:pb-24 md:pb-36 -mt-2 sm:-mt-3 md:-mt-4"
     >
       <div
-        className="grid md:grid-cols-12 gap-8 border-t pt-5"
+        className="relative z-20 grid md:grid-cols-12 gap-8 border-t pt-5"
         style={{ borderColor: "#F2552C" }}
       >
         <div className="md:col-span-3">
@@ -588,7 +588,7 @@ function About() {
             className="leading-[0.95] tracking-[-0.035em] max-w-5xl"
             style={{
               color: COLORS.sonic,
-              fontSize: "clamp(2.9rem, 6.6vw, 6.8rem)",
+              fontSize: "clamp(2.25rem, 9vw, 6.8rem)",
               fontWeight: 600,
             }}
           >
@@ -683,7 +683,7 @@ const highlights = [
 
 function Experience() {
   return (
-    <section id="experience" className="px-5 md:px-10 py-24 md:py-36" style={{ background: COLORS.green }}>
+    <section id="experience" className="px-3 sm:px-5 md:px-10 py-16 sm:py-20 md:py-36" style={{ background: COLORS.green }}>
       <div className="grid md:grid-cols-12 gap-8 border-t pt-6" style={{ borderColor: COLORS.blue }}>
         <div className="md:col-span-3">
           <p className="uppercase text-xs" style={{ color: COLORS.blue, letterSpacing: "0.1em" }}>
@@ -695,7 +695,7 @@ function Experience() {
             className="leading-[0.92] tracking-[-0.04em] max-w-5xl"
             style={{
               color: COLORS.blue,
-              fontSize: "clamp(3rem, 7.5vw, 7.5rem)",
+              fontSize: "clamp(2.3rem, 9.5vw, 7.5rem)",
               fontWeight: 600,
             }}
           >
@@ -758,7 +758,7 @@ const services = [
 
 function Services() {
   return (
-    <section id="services" className="px-5 md:px-10 py-24 md:py-36" style={{ background: COLORS.blue }}>
+    <section id="services" className="px-3 sm:px-5 md:px-10 py-16 sm:py-20 md:py-36" style={{ background: COLORS.blue }}>
       <div className="grid md:grid-cols-12 gap-8 border-t pt-6" style={{ borderColor: "#F2552C" }}>
         <div className="md:col-span-3">
           <p className="uppercase text-xs" style={{ color: "#D9DDE3", letterSpacing: "0.1em" }}>
@@ -770,7 +770,7 @@ function Services() {
             className="leading-[0.92] tracking-[-0.04em] max-w-5xl"
             style={{
               color: "#F2552C",
-              fontSize: "clamp(3rem, 8vw, 8rem)",
+              fontSize: "clamp(2.3rem, 9.5vw, 8rem)",
               fontWeight: 600,
             }}
           >
@@ -780,13 +780,13 @@ function Services() {
       </div>
 
       <div
-        className="mt-20 md:mt-28 grid grid-cols-2 lg:grid-cols-3 border-t border-l"
+        className="mt-14 sm:mt-20 md:mt-28 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border-t border-l"
         style={{ borderColor: "#F2552C" }}
       >
         {services.map(([number, title, desc]) => (
           <div
             key={number}
-            className="service-card group min-h-[160px] md:min-h-[300px] p-4 md:p-8 border-r border-b flex flex-col justify-between"
+            className="service-card group min-h-[150px] sm:min-h-[170px] md:min-h-[300px] p-4 md:p-8 border-r border-b flex flex-col justify-between"
             style={{
               borderColor: "#F2552C",
               background: "transparent",
@@ -1064,7 +1064,7 @@ function Testimonials() {
           </div>
 
           <div
-            className="relative h-[370px] sm:h-[350px] md:h-auto"
+            className="relative h-[390px] xs:h-[370px] sm:h-[350px] md:h-auto"
             style={{
               minHeight: "clamp(260px, 28vw, 420px)",
               overflow: "hidden",
@@ -1167,7 +1167,7 @@ function Contact() {
   return (
     <section
       id="contact"
-      className="px-5 md:px-10 py-24 md:py-36"
+      className="px-3 sm:px-5 md:px-10 py-16 sm:py-20 md:py-36"
       style={{ background: "#002FA7" }}
     >
       <div
@@ -1188,7 +1188,7 @@ function Contact() {
             className="leading-[0.9] tracking-[-0.045em] max-w-5xl"
             style={{
               color: "#F2552C",
-              fontSize: "clamp(3.8rem, 9vw, 9rem)",
+              fontSize: "clamp(2.6rem, 10vw, 9rem)",
               fontWeight: 600,
             }}
           >
@@ -1285,7 +1285,7 @@ function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-nowrap justify-between md:justify-start md:gap-5">
+        <div className="flex flex-wrap gap-x-4 gap-y-2 md:justify-start md:gap-5">
           {NAV_LINKS.map((item) => (
             <a
               key={item}
@@ -1309,10 +1309,42 @@ function Footer() {
 export default function App() {
   return (
     <div
-      className="site-root"
+      className="site-root overflow-x-hidden"
       style={{ fontFamily: "'Outfit', sans-serif", background: COLORS.blue }}
     >
       <style>{`
+        *, *::before, *::after {
+          box-sizing: border-box;
+        }
+
+        html, body, #root {
+          width: 100%;
+          max-width: 100%;
+          overflow-x: hidden;
+        }
+
+        img, svg {
+          max-width: 100%;
+        }
+
+        @media (max-width: 480px) {
+          .hero-line {
+            letter-spacing: -0.055em;
+          }
+
+          #testimonials {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+          }
+
+          #contact,
+          #services,
+          #experience,
+          #about {
+            scroll-margin-top: 72px;
+          }
+        }
+
         /* Small and supporting copy — 13-4016 TPG */
         .site-root p,
         .site-root a,
