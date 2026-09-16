@@ -102,36 +102,41 @@ function Nav() {
 function RotatingHeroHeadline() {
   const [cursor, setCursor] = useState({ x: -500, y: -500, active: false });
   const [scrollShift, setScrollShift] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const headlineRef = useRef(null);
 
   const LENS_RADIUS = 205;
 
   useEffect(() => {
     let frameId;
-    let current = 0;
-    let target = 0;
 
     const update = () => {
-      current += (target - current) * 0.12;
-      setScrollShift(current);
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
 
-      if (Math.abs(target - current) > 0.001) {
-        frameId = requestAnimationFrame(update);
+      if (mobile) {
+        // On mobile, track the user's finger scroll directly with no lag.
+        // The hero starts fully aligned and each line drifts right independently.
+        const progress = Math.max(0, Math.min(1, window.scrollY / 300));
+        setScrollShift(progress);
+      } else {
+        // Keep desktop behaviour unchanged.
+        setScrollShift(Math.min(window.scrollY / 360, 1));
       }
     };
 
     const handleScroll = () => {
-      target = Math.min(window.scrollY / 360, 1);
-
       cancelAnimationFrame(frameId);
       frameId = requestAnimationFrame(update);
     };
 
-    handleScroll();
+    update();
     window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
       cancelAnimationFrame(frameId);
     };
   }, []);
@@ -227,7 +232,7 @@ function RotatingHeroHeadline() {
           <span
             className="block hero-line hero-line-1"
             style={{
-              "--scroll-x": `${scrollShift * 185}px`,
+              "--scroll-x": `${scrollShift * (isMobile ? 42 : 185)}px`,
             }}
           >
             Financial
@@ -235,7 +240,7 @@ function RotatingHeroHeadline() {
           <span
             className="block hero-line hero-line-2"
             style={{
-              "--scroll-x": `${Math.max(0, (scrollShift - 0.18) / 0.82) * 160}px`,
+              "--scroll-x": `${Math.max(0, (scrollShift - (isMobile ? 0.10 : 0.18)) / (isMobile ? 0.90 : 0.82)) * (isMobile ? 34 : 160)}px`,
             }}
           >
             clarity for
@@ -243,7 +248,7 @@ function RotatingHeroHeadline() {
           <span
             className="block hero-line hero-line-3"
             style={{
-              "--scroll-x": `${Math.max(0, (scrollShift - 0.36) / 0.64) * 130}px`,
+              "--scroll-x": `${Math.max(0, (scrollShift - (isMobile ? 0.20 : 0.36)) / (isMobile ? 0.80 : 0.64)) * (isMobile ? 26 : 130)}px`,
             }}
           >
             music.
@@ -273,7 +278,7 @@ function RotatingHeroHeadline() {
           <span
             className="block hero-line hero-line-1"
             style={{
-              "--scroll-x": `${scrollShift * 185}px`,
+              "--scroll-x": `${scrollShift * (isMobile ? 42 : 185)}px`,
             }}
           >
             Financial
@@ -281,7 +286,7 @@ function RotatingHeroHeadline() {
           <span
             className="block hero-line hero-line-2"
             style={{
-              "--scroll-x": `${Math.max(0, (scrollShift - 0.18) / 0.82) * 160}px`,
+              "--scroll-x": `${Math.max(0, (scrollShift - (isMobile ? 0.10 : 0.18)) / (isMobile ? 0.90 : 0.82)) * (isMobile ? 34 : 160)}px`,
             }}
           >
             clarity for
@@ -289,7 +294,7 @@ function RotatingHeroHeadline() {
           <span
             className="block hero-line hero-line-3"
             style={{
-              "--scroll-x": `${Math.max(0, (scrollShift - 0.36) / 0.64) * 130}px`,
+              "--scroll-x": `${Math.max(0, (scrollShift - (isMobile ? 0.20 : 0.36)) / (isMobile ? 0.80 : 0.64)) * (isMobile ? 26 : 130)}px`,
             }}
           >
             music.
@@ -368,49 +373,52 @@ function ScrollRevealHeading({ children, className = "", style = {} }) {
 
   useEffect(() => {
     let frame;
-    let current = 0;
-    let target = 0;
+    let desktopCurrent = 0;
+    let desktopTarget = 0;
 
-    const getIsMobile = () => window.innerWidth < 768;
-
-    const animate = () => {
-      const mobile = getIsMobile();
-      const smoothing = mobile ? 0.14 : 0.05;
-
-      current += (target - current) * smoothing;
-      setProgress(current);
-
-      if (Math.abs(target - current) > 0.001) {
-        frame = requestAnimationFrame(animate);
-      }
-    };
-
-    const updateTarget = () => {
+    const update = () => {
       if (!ref.current) return;
 
-      const mobile = getIsMobile();
+      const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
 
       const rect = ref.current.getBoundingClientRect();
       const viewport = window.innerHeight;
 
-      const start = viewport * (mobile ? 0.94 : 1.02);
-      const end = viewport * (mobile ? 0.58 : 0.38);
-      const raw = (start - rect.top) / (start - end);
+      if (mobile) {
+        // Start while the heading is still low in the viewport and finish
+        // before it reaches the centre. This keeps the motion subtle and
+        // tightly connected to finger scrolling in both directions.
+        const start = viewport * 0.92;
+        const end = viewport * 0.54;
+        const raw = (start - rect.top) / (start - end);
+        const next = Math.max(0, Math.min(1, raw));
 
-      target = Math.max(0, Math.min(1, raw));
+        // Direct progress = no delayed/floaty tracking on phones.
+        setProgress(next);
+      } else {
+        const start = viewport * 1.02;
+        const end = viewport * 0.38;
+        const raw = (start - rect.top) / (start - end);
+        desktopTarget = Math.max(0, Math.min(1, raw));
 
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(animate);
+        desktopCurrent += (desktopTarget - desktopCurrent) * 0.05;
+        setProgress(desktopCurrent);
+      }
     };
 
-    updateTarget();
-    window.addEventListener("scroll", updateTarget, { passive: true });
-    window.addEventListener("resize", updateTarget);
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
 
     return () => {
-      window.removeEventListener("scroll", updateTarget);
-      window.removeEventListener("resize", updateTarget);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
       cancelAnimationFrame(frame);
     };
   }, []);
@@ -420,18 +428,20 @@ function ScrollRevealHeading({ children, className = "", style = {} }) {
   return (
     <h2 ref={ref} className={className} style={style}>
       {lines.map((line, index) => {
-        const stagger = index * (isMobile ? 0.10 : 0.18);
+        const stagger = index * (isMobile ? 0.11 : 0.18);
         const lineProgress = Math.max(
           0,
           Math.min(1, (progress - stagger) / (1 - stagger))
         );
 
-        const eased =
-          lineProgress < 0.5
+        // Softer easing on mobile, but still fully scroll-linked.
+        const eased = isMobile
+          ? lineProgress * lineProgress * (3 - 2 * lineProgress)
+          : lineProgress < 0.5
             ? 4 * lineProgress * lineProgress * lineProgress
             : 1 - Math.pow(-2 * lineProgress + 2, 3) / 2;
 
-        const x = (1 - eased) * (isMobile ? 30 : 54);
+        const x = (1 - eased) * (isMobile ? 26 : 54);
 
         return (
           <span
@@ -1194,6 +1204,12 @@ export default function App() {
       style={{ fontFamily: "'Outfit', sans-serif", background: COLORS.blue }}
     >
       <style>{`
+        @media (max-width: 767px) {
+          .hero-line {
+            transition: none !important;
+          }
+        }
+
         /* Mobile camera / notch clearance */
         @media (max-width: 767px) {
           .mobile-safe-nav {
