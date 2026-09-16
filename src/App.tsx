@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import logo from "./imports/IMG_4936.jpeg";
+import logo from "./imports/logo.png";
 
 const COLORS = {
   blue: "#002FA7",   // replacement for 17-1562 TCX — background & header
@@ -14,7 +14,7 @@ function Nav() {
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-50 px-3 sm:px-5 md:px-10 py-3 sm:py-4 overflow-x-hidden"
+      className="mobile-safe-nav fixed top-0 left-0 right-0 z-50 px-5 md:px-10 py-4"
       style={{
         background: "transparent",
       }}
@@ -35,22 +35,12 @@ function Nav() {
         }}
       />
       <div className="flex items-center justify-between">
-        <a href="#top" className="flex items-center gap-3">
+        <a href="#top" className="flex items-center shrink-0">
           <img
             src={logo}
             alt="Creative Source Agency logo"
-            className="w-8 h-8 sm:w-10 sm:h-10 object-cover shrink-0"
+            className="w-[60px] h-[60px] object-cover shrink-0"
           />
-          <span
-            className="uppercase text-[11px] sm:text-sm md:text-base whitespace-nowrap"
-            style={{
-              color: COLORS.sonic,
-              fontWeight: 700,
-              letterSpacing: "0.06em",
-            }}
-          >
-            Creative Source Agency
-          </span>
         </a>
 
         <ul className="hidden md:flex items-center gap-7">
@@ -60,7 +50,7 @@ function Nav() {
                 href={`#${item.toLowerCase()}`}
                 className="text-xs uppercase transition-opacity hover:opacity-50"
                 style={{
-                  color: COLORS.green,
+                  color: COLORS.sonic,
                   letterSpacing: "0.09em",
                   fontWeight: 500,
                 }}
@@ -72,7 +62,7 @@ function Nav() {
         </ul>
 
         <button
-          className="md:hidden flex flex-col gap-1.5 p-1.5 ml-2 shrink-0"
+          className="md:hidden flex flex-col gap-1.5 p-2"
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
         >
@@ -84,7 +74,7 @@ function Nav() {
 
       {open && (
         <div
-          className="md:hidden absolute top-full left-0 right-0 w-full max-h-[calc(100vh-64px)] overflow-y-auto px-4 py-6 border-b flex flex-col gap-4 box-border"
+          className="md:hidden absolute top-full left-0 right-0 px-5 py-8 border-b flex flex-col gap-5"
           style={{
             background: COLORS.blue,
             borderColor: "#F2552C",
@@ -169,7 +159,7 @@ function RotatingHeroHeadline() {
   };
 
   const headlineStyle = {
-    fontSize: "clamp(3rem, 12vw, 13rem)",
+    fontSize: "clamp(4.7rem, 13vw, 13rem)",
     fontWeight: 700,
     marginLeft: 0,
     paddingLeft: 0,
@@ -348,7 +338,7 @@ function Hero() {
   return (
     <section
       id="top"
-      className="min-h-[68vh] md:min-h-screen flex flex-col justify-between pt-20 sm:pt-24 px-3 sm:px-5 md:px-10 pb-4 md:pb-7"
+      className="min-h-[62vh] md:min-h-[88vh] flex flex-col justify-between pt-24 px-5 md:px-10 pb-4 md:pb-7"
       style={{ background: COLORS.blue }}
     >
       <div className="pt-6">
@@ -367,120 +357,6 @@ function Hero() {
 
         <RotatingHeroHeadline />
       </div>
-
-      <div
-        className="grid md:grid-cols-3 gap-6 pt-5 border-t items-end"
-        style={{ borderColor: "#F2552C" }}
-      >
-        <p className="text-sm leading-relaxed max-w-md" style={{ color: "#D9DDE3" }}>
-          Senior financial thinking without the corporate distance — built around the realities of labels, royalties and distribution.
-        </p>
-
-        <div className="hidden md:block" />
-
-<div className="hidden md:block" />
-      </div>
-    </section>
-  );
-}
-
-function StatementStrip() {
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    let frame;
-
-    const handleScroll = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        setScrollY(window.scrollY);
-      });
-    };
-
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(frame);
-    };
-  }, []);
-
-  const items = [
-    "Royalty Accounting ↗",
-    "Financial Control ↗",
-    "Management Accounts ↗",
-    "Music Industry Expertise ↗",
-    "Royalty Accounting ↗",
-    "Financial Control ↗",
-  ];
-
-  const motions = [
-    { x: 0.05, y: 0.03, rotate: 0.004 },
-    { x: -0.04, y: 0.05, rotate: -0.003 },
-    { x: 0.03, y: -0.04, rotate: 0.0025 },
-    { x: -0.05, y: -0.02, rotate: -0.004 },
-    { x: 0.025, y: 0.045, rotate: 0.003 },
-    { x: -0.03, y: 0.02, rotate: -0.0025 },
-  ];
-
-  return (
-    <section
-      className="relative overflow-visible px-3 sm:px-5 md:px-10 pt-0 md:pt-1 pb-10 sm:pb-14 md:pb-16 z-10"
-      style={{
-        background: "transparent",
-        minHeight: "260px",
-      }}
-    >
-      <div className="relative w-full h-[190px] sm:h-[220px] md:h-[280px] -translate-y-1 md:-translate-y-3">
-        {items.map((item, index) => {
-          const motion = motions[index];
-          const basePositions = [
-            { left: "-2%", top: "-2%" },
-            { left: "28%", top: "-7%" },
-            { left: "64%", top: "0%" },
-            { left: "8%", top: "40%" },
-            { left: "40%", top: "36%" },
-            { left: "76%", top: "42%" },
-          ];
-
-          const pos = basePositions[index];
-          const x = scrollY * motion.x;
-          const y = scrollY * motion.y;
-          const rotate = scrollY * motion.rotate;
-
-          return (
-            <div
-              key={`${item}-${index}`}
-              className="absolute rounded-full flex items-center justify-center text-center px-6 md:px-8"
-              style={{
-                left: pos.left,
-                top: pos.top,
-                width: "clamp(92px, 22vw, 275px)",
-                aspectRatio: "1 / 1",
-                transform: `translate(${x}px, ${y}px) rotate(${rotate}deg)`,
-                background: "#F2552C",
-                color: "#D9DDE3",
-                transition: "transform 120ms linear",
-                boxShadow: "0 10px 30px rgba(0,0,0,0.08), 0 0 7px 1px rgba(242,85,44,0.18)",
-                filter: "blur(0.35px)",
-              }}
-            >
-              <span
-                className="uppercase leading-tight"
-                style={{
-                  fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: "clamp(0.58rem, 2.2vw, 1.55rem)",
-                  fontWeight: 600,
-                  letterSpacing: "0.04em",
-                }}
-              >
-                {item}
-              </span>
-            </div>
-          );
-        })}
-      </div>
     </section>
   );
 }
@@ -495,7 +371,7 @@ function ScrollRevealHeading({ children, className = "", style = {} }) {
     let target = 0;
 
     const animate = () => {
-      current += (target - current) * 0.11;
+      current += (target - current) * 0.05;
       setProgress(current);
 
       if (Math.abs(target - current) > 0.001) {
@@ -511,8 +387,8 @@ function ScrollRevealHeading({ children, className = "", style = {} }) {
 
       // Begin just before the heading fully enters the viewport and
       // settle gently into place as it moves upward.
-      const start = viewport * 0.96;
-      const end = viewport * 0.56;
+      const start = viewport * 1.02;
+      const end = viewport * 0.38;
       const raw = (start - rect.top) / (start - end);
 
       target = Math.max(0, Math.min(1, raw));
@@ -537,14 +413,16 @@ function ScrollRevealHeading({ children, className = "", style = {} }) {
   return (
     <h2 ref={ref} className={className} style={style}>
       {lines.map((line, index) => {
-        const stagger = index * 0.12;
+        const stagger = index * 0.18;
         const lineProgress = Math.max(
           0,
           Math.min(1, (progress - stagger) / (1 - stagger))
         );
 
-        const eased = 1 - Math.pow(1 - lineProgress, 3);
-        const x = (1 - eased) * 34;
+        const eased = lineProgress < 0.5
+          ? 4 * lineProgress * lineProgress * lineProgress
+          : 1 - Math.pow(-2 * lineProgress + 2, 3) / 2;
+        const x = (1 - eased) * 54;
 
         return (
           <span
@@ -568,10 +446,10 @@ function About() {
     <section
       id="about"
       style={{ background: COLORS.blue, position: "relative", zIndex: 5 }}
-      className="px-3 sm:px-5 md:px-10 pt-24 sm:pt-28 md:pt-36 pb-20 sm:pb-24 md:pb-36 -mt-2 sm:-mt-3 md:-mt-4"
+      className="px-5 md:px-10 pt-20 md:pt-28 pb-24 md:pb-36 -mt-8 md:-mt-12"
     >
       <div
-        className="relative z-20 grid md:grid-cols-12 gap-8 border-t pt-5"
+        className="grid md:grid-cols-12 gap-8 border-t pt-5"
         style={{ borderColor: "#F2552C" }}
       >
         <div className="md:col-span-3">
@@ -584,16 +462,18 @@ function About() {
         </div>
 
         <div className="md:col-span-9">
-          <ScrollRevealHeading
-            className="leading-[0.95] tracking-[-0.035em] max-w-5xl"
-            style={{
-              color: COLORS.sonic,
-              fontSize: "clamp(2.25rem, 9vw, 6.8rem)",
-              fontWeight: 600,
-            }}
-          >
-            {["Clear financial thinking", "for the independent music world."]}
-          </ScrollRevealHeading>
+          <div className="about-heading-reveal">
+            <ScrollRevealHeading
+              className="leading-[0.95] tracking-[-0.035em] max-w-5xl"
+              style={{
+                color: COLORS.sonic,
+                fontSize: "clamp(2.9rem, 6.6vw, 6.8rem)",
+                fontWeight: 600,
+              }}
+            >
+              {["Expert Financial", "Leadership", "and Royalty Accounting", "for the Music Industry"]}
+            </ScrollRevealHeading>
+          </div>
 
           <div
             className="mt-16 md:mt-24 border-t pt-7"
@@ -683,7 +563,7 @@ const highlights = [
 
 function Experience() {
   return (
-    <section id="experience" className="px-3 sm:px-5 md:px-10 py-16 sm:py-20 md:py-36" style={{ background: COLORS.green }}>
+    <section id="experience" className="px-5 md:px-10 py-24 md:py-36" style={{ background: COLORS.green }}>
       <div className="grid md:grid-cols-12 gap-8 border-t pt-6" style={{ borderColor: COLORS.blue }}>
         <div className="md:col-span-3">
           <p className="uppercase text-xs" style={{ color: COLORS.blue, letterSpacing: "0.1em" }}>
@@ -695,7 +575,7 @@ function Experience() {
             className="leading-[0.92] tracking-[-0.04em] max-w-5xl"
             style={{
               color: COLORS.blue,
-              fontSize: "clamp(2.3rem, 9.5vw, 7.5rem)",
+              fontSize: "clamp(3rem, 7.5vw, 7.5rem)",
               fontWeight: 600,
             }}
           >
@@ -732,17 +612,6 @@ function Experience() {
           </div>
         ))}
       </div>
-
-      <div className="mt-14 flex flex-wrap gap-x-8 gap-y-3">
-        <span className="uppercase text-xs" style={{ color: COLORS.blue, letterSpacing: "0.08em", opacity: 0.5 }}>
-          Tools:
-        </span>
-        {["SR1", "Curve", "Sage", "Xero", "Microsoft Excel"].map((tool) => (
-          <span key={tool} className="text-sm uppercase font-semibold" style={{ color: COLORS.blue, letterSpacing: "0.08em" }}>
-            {tool}
-          </span>
-        ))}
-      </div>
     </section>
   );
 }
@@ -758,7 +627,7 @@ const services = [
 
 function Services() {
   return (
-    <section id="services" className="px-3 sm:px-5 md:px-10 py-16 sm:py-20 md:py-36" style={{ background: COLORS.blue }}>
+    <section id="services" className="px-5 md:px-10 py-24 md:py-36" style={{ background: COLORS.blue }}>
       <div className="grid md:grid-cols-12 gap-8 border-t pt-6" style={{ borderColor: "#F2552C" }}>
         <div className="md:col-span-3">
           <p className="uppercase text-xs" style={{ color: "#D9DDE3", letterSpacing: "0.1em" }}>
@@ -770,7 +639,7 @@ function Services() {
             className="leading-[0.92] tracking-[-0.04em] max-w-5xl"
             style={{
               color: "#F2552C",
-              fontSize: "clamp(2.3rem, 9.5vw, 8rem)",
+              fontSize: "clamp(3rem, 8vw, 8rem)",
               fontWeight: 600,
             }}
           >
@@ -780,13 +649,13 @@ function Services() {
       </div>
 
       <div
-        className="mt-14 sm:mt-20 md:mt-28 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border-t border-l"
+        className="mt-20 md:mt-28 grid grid-cols-2 lg:grid-cols-3 border-t border-l"
         style={{ borderColor: "#F2552C" }}
       >
         {services.map(([number, title, desc]) => (
           <div
             key={number}
-            className="service-card group min-h-[150px] sm:min-h-[170px] md:min-h-[300px] p-4 md:p-8 border-r border-b flex flex-col justify-between"
+            className="service-card group min-h-[160px] md:min-h-[300px] p-4 md:p-8 border-r border-b flex flex-col justify-between"
             style={{
               borderColor: "#F2552C",
               background: "transparent",
@@ -1064,7 +933,7 @@ function Testimonials() {
           </div>
 
           <div
-            className="relative h-[390px] xs:h-[370px] sm:h-[350px] md:h-auto"
+            className="relative h-[260px] sm:h-[285px] md:h-auto"
             style={{
               minHeight: "clamp(260px, 28vw, 420px)",
               overflow: "hidden",
@@ -1113,7 +982,7 @@ function Testimonials() {
       <style>{`
         @media (max-width: 767px) {
           #testimonials .testimonial-quote {
-            font-size: clamp(2rem, 9.5vw, 2.5rem) !important;
+            font-size: clamp(1.6rem, 7.2vw, 2rem) !important;
             line-height: 1.04;
           }
         }
@@ -1167,7 +1036,7 @@ function Contact() {
   return (
     <section
       id="contact"
-      className="px-3 sm:px-5 md:px-10 py-16 sm:py-20 md:py-36"
+      className="px-5 md:px-10 py-24 md:py-36"
       style={{ background: "#002FA7" }}
     >
       <div
@@ -1188,7 +1057,7 @@ function Contact() {
             className="leading-[0.9] tracking-[-0.045em] max-w-5xl"
             style={{
               color: "#F2552C",
-              fontSize: "clamp(2.6rem, 10vw, 9rem)",
+              fontSize: "clamp(3.8rem, 9vw, 9rem)",
               fontWeight: 600,
             }}
           >
@@ -1271,34 +1140,36 @@ function Contact() {
 
 function Footer() {
   return (
-    <footer className="px-5 md:px-10 py-7 border-t" style={{ background: COLORS.blue, borderColor: "#F2552C" }}>
-      <div className="flex flex-col md:flex-row gap-5 md:items-end md:justify-between">
-        <div className="flex items-center gap-3">
-          <img src={logo} alt="Creative Source Agency" className="w-8 h-8 object-cover" />
-          <div>
-            <div className="uppercase text-sm font-semibold" style={{ color: COLORS.sonic, letterSpacing: "0.04em" }}>
-              Creative Source Agency
-            </div>
-            <div className="text-xs mt-0.5" style={{ color: COLORS.green }}>
-              Music Industry Financial Specialists
-            </div>
-          </div>
+    <footer
+      className="px-5 md:px-10 py-10 md:py-12 border-t"
+      style={{ background: COLORS.blue, borderColor: "#F2552C" }}
+    >
+      <div className="flex flex-col md:flex-row gap-8 md:items-center md:justify-between">
+        <div className="flex items-center">
+          <img
+            src={logo}
+            alt="Creative Source Agency"
+            className="w-[96px] h-[96px] md:w-[72px] md:h-[72px] object-cover"
+          />
         </div>
 
-        <div className="flex flex-wrap gap-x-4 gap-y-2 md:justify-start md:gap-5">
+        <div className="flex flex-col items-start gap-3 md:flex-row md:flex-wrap md:gap-x-8 md:gap-y-3">
           {NAV_LINKS.map((item) => (
             <a
               key={item}
               href={`#${item.toLowerCase()}`}
-              className="uppercase shrink-0 text-[9px] md:text-[10px] hover:opacity-50 transition-opacity"
-              style={{ color: COLORS.green, letterSpacing: "0.06em" }}
+              className="uppercase shrink-0 text-xs md:text-sm hover:opacity-50 transition-opacity"
+              style={{ color: COLORS.green, letterSpacing: "0.07em" }}
             >
               {item}
             </a>
           ))}
         </div>
 
-        <div className="text-[10px] uppercase" style={{ color: COLORS.green, letterSpacing: "0.08em" }}>
+        <div
+          className="text-xs md:text-sm uppercase"
+          style={{ color: COLORS.green, letterSpacing: "0.08em" }}
+        >
           © {new Date().getFullYear()} Creative Source Agency
         </div>
       </div>
@@ -1309,39 +1180,20 @@ function Footer() {
 export default function App() {
   return (
     <div
-      className="site-root overflow-x-hidden"
+      className="site-root"
       style={{ fontFamily: "'Outfit', sans-serif", background: COLORS.blue }}
     >
       <style>{`
-        *, *::before, *::after {
-          box-sizing: border-box;
-        }
-
-        html, body, #root {
-          width: 100%;
-          max-width: 100%;
-          overflow-x: hidden;
-        }
-
-        img, svg {
-          max-width: 100%;
-        }
-
-        @media (max-width: 480px) {
-          .hero-line {
-            letter-spacing: -0.055em;
+        /* Mobile camera / notch clearance */
+        @media (max-width: 767px) {
+          .mobile-safe-nav {
+            padding-top: max(2.25rem, calc(env(safe-area-inset-top, 0px) + 1rem));
           }
+        }
 
-          #testimonials {
-            padding-left: 0.75rem;
-            padding-right: 0.75rem;
-          }
-
-          #contact,
-          #services,
-          #experience,
-          #about {
-            scroll-margin-top: 72px;
+        @media (min-width: 768px) {
+          .mobile-safe-nav {
+            padding-top: 1rem;
           }
         }
 
@@ -1412,7 +1264,6 @@ export default function App() {
       `}</style>
       <Nav />
       <Hero />
-      <StatementStrip />
       <About />
       <Experience />
       <Services />
