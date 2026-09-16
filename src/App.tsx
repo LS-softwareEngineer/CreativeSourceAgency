@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import logo from "./imports/logo.png";    
+import logo from "./imports/logo.png";
 
 const COLORS = {
   blue: "#002FA7",   // replacement for 17-1562 TCX — background & header
@@ -364,14 +364,20 @@ function Hero() {
 function ScrollRevealHeading({ children, className = "", style = {} }) {
   const ref = useRef(null);
   const [progress, setProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     let frame;
     let current = 0;
     let target = 0;
 
+    const getIsMobile = () => window.innerWidth < 768;
+
     const animate = () => {
-      current += (target - current) * 0.05;
+      const mobile = getIsMobile();
+      const smoothing = mobile ? 0.14 : 0.05;
+
+      current += (target - current) * smoothing;
       setProgress(current);
 
       if (Math.abs(target - current) > 0.001) {
@@ -382,13 +388,14 @@ function ScrollRevealHeading({ children, className = "", style = {} }) {
     const updateTarget = () => {
       if (!ref.current) return;
 
+      const mobile = getIsMobile();
+      setIsMobile(mobile);
+
       const rect = ref.current.getBoundingClientRect();
       const viewport = window.innerHeight;
 
-      // Begin just before the heading fully enters the viewport and
-      // settle gently into place as it moves upward.
-      const start = viewport * 1.02;
-      const end = viewport * 0.38;
+      const start = viewport * (mobile ? 0.94 : 1.02);
+      const end = viewport * (mobile ? 0.58 : 0.38);
       const raw = (start - rect.top) / (start - end);
 
       target = Math.max(0, Math.min(1, raw));
@@ -413,24 +420,27 @@ function ScrollRevealHeading({ children, className = "", style = {} }) {
   return (
     <h2 ref={ref} className={className} style={style}>
       {lines.map((line, index) => {
-        const stagger = index * 0.18;
+        const stagger = index * (isMobile ? 0.10 : 0.18);
         const lineProgress = Math.max(
           0,
           Math.min(1, (progress - stagger) / (1 - stagger))
         );
 
-        const eased = lineProgress < 0.5
-          ? 4 * lineProgress * lineProgress * lineProgress
-          : 1 - Math.pow(-2 * lineProgress + 2, 3) / 2;
-        const x = (1 - eased) * 54;
+        const eased =
+          lineProgress < 0.5
+            ? 4 * lineProgress * lineProgress * lineProgress
+            : 1 - Math.pow(-2 * lineProgress + 2, 3) / 2;
+
+        const x = (1 - eased) * (isMobile ? 30 : 54);
 
         return (
           <span
             key={index}
             className="block"
             style={{
-              transform: `translateX(${x}px)`,
+              transform: `translate3d(${x}px, 0, 0)`,
               willChange: "transform",
+              backfaceVisibility: "hidden",
             }}
           >
             {line}
