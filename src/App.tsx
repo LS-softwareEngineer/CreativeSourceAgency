@@ -7,14 +7,14 @@ const COLORS = {
   green: "#F2552C",  // 17-1562 TCX Flame — body text
 };
 
-const NAV_LINKS = ["Services", "About", "Experience", "Testimonials", "Contact"];
+const NAV_LINKS = ["About", "Experience", "Services", "Testimonials", "Contact"];
 
 function Nav() {
   const [open, setOpen] = useState(false);
 
   return (
     <nav
-      className="mobile-safe-nav fixed top-0 left-0 right-0 z-50 w-full max-w-[100vw] px-5 md:px-10 py-4 overflow-hidden"
+      className="mobile-safe-nav fixed top-0 left-0 right-0 z-50 px-5 md:px-10 py-4"
       style={{
         background: "transparent",
       }}
@@ -23,16 +23,15 @@ function Nav() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 -z-10"
         style={{
-          /*
-           * Clean header fade:
-           * solid Creative Source blue at the top,
-           * gradually fades to complete transparency,
-           * then stays transparent for the bottom part of the layer.
-           * This avoids any visible edge/cut-off line.
-           */
-          height: "220px",
+          height: "150px",
           background:
-            "linear-gradient(to bottom, rgba(0,47,167,1) 0%, rgba(0,47,167,1) 26%, rgba(0,47,167,0.96) 38%, rgba(0,47,167,0.84) 48%, rgba(0,47,167,0.66) 58%, rgba(0,47,167,0.46) 66%, rgba(0,47,167,0.28) 73%, rgba(0,47,167,0.14) 79%, rgba(0,47,167,0.055) 84%, rgba(0,47,167,0.015) 88%, rgba(0,47,167,0) 92%, rgba(0,47,167,0) 100%)",
+            "linear-gradient(to bottom, rgba(0,47,167,0.96) 0%, rgba(0,47,167,0.84) 28%, rgba(0,47,167,0.60) 52%, rgba(0,47,167,0.30) 72%, rgba(0,47,167,0.08) 88%, transparent 100%)",
+          backdropFilter: "blur(18px)",
+          WebkitBackdropFilter: "blur(18px)",
+          maskImage:
+            "linear-gradient(to bottom, black 0%, black 34%, rgba(0,0,0,0.82) 54%, rgba(0,0,0,0.48) 72%, rgba(0,0,0,0.14) 90%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, black 0%, black 34%, rgba(0,0,0,0.82) 54%, rgba(0,0,0,0.48) 72%, rgba(0,0,0,0.14) 90%, transparent 100%)",
         }}
       />
       <div className="flex items-center justify-between">
@@ -75,7 +74,7 @@ function Nav() {
 
       {open && (
         <div
-          className="md:hidden absolute top-full left-0 right-0 w-full max-w-[100vw] px-5 py-8 border-b flex flex-col gap-5 overflow-hidden"
+          className="md:hidden absolute top-full left-0 right-0 px-5 py-8 border-b flex flex-col gap-5"
           style={{
             background: COLORS.blue,
             borderColor: "#F2552C",
@@ -310,7 +309,7 @@ function RotatingHeroHeadline() {
           transform: translateX(calc(82px + var(--scroll-x)));
           animation: heroLineIn 680ms cubic-bezier(0.18, 0.86, 0.3, 1) forwards;
           will-change: transform, opacity;
-          transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+          transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .hero-line-1 {
@@ -453,7 +452,7 @@ function FloatingServiceCircles() {
               fontWeight: 600,
             }}
           >
-            {["What We Do"]}
+            {["What We Do."]}
           </ScrollRevealHeading>
         </div>
       </div>
@@ -594,6 +593,18 @@ function ScrollRevealHeading({ children, className = "", style = {}, topToBottom
     let target = 0;
     let mobile = window.innerWidth < 768;
 
+    const animate = () => {
+      current += (target - current) * 0.09;
+      setProgress(current);
+
+      if (Math.abs(target - current) > 0.0008) {
+        frame = requestAnimationFrame(animate);
+      } else {
+        current = target;
+        setProgress(target);
+      }
+    };
+
     const calculateTarget = () => {
       if (!ref.current) return;
 
@@ -606,24 +617,17 @@ function ScrollRevealHeading({ children, className = "", style = {}, topToBottom
       const start = mobile ? viewport * 0.92 : viewport * 1.02;
       const end = mobile ? viewport * 0.54 : viewport * 0.38;
       const raw = (start - rect.top) / (start - end);
-
       target = Math.max(0, Math.min(1, raw));
 
-      // Mobile follows the finger closely; desktop eases smoothly.
+      cancelAnimationFrame(frame);
+
       if (mobile) {
+        // Keep mobile directly linked to finger scrolling.
         current = target;
-        setProgress(current);
+        setProgress(target);
       } else {
-        cancelAnimationFrame(frame);
-        frame = requestAnimationFrame(animate);
-      }
-    };
-
-    const animate = () => {
-      current += (target - current) * 0.075;
-      setProgress(current);
-
-      if (Math.abs(target - current) > 0.0008) {
+        // Keep animating after the scroll event ends so the heading actually
+        // reaches its target position instead of moving only one tiny step.
         frame = requestAnimationFrame(animate);
       }
     };
@@ -650,7 +654,6 @@ function ScrollRevealHeading({ children, className = "", style = {}, topToBottom
           Math.min(1, (progress - stagger) / (1 - stagger))
         );
 
-        // Softer easing on mobile, but still fully scroll-linked.
         const eased = isMobile
           ? lineProgress * lineProgress * (3 - 2 * lineProgress)
           : lineProgress < 0.5
@@ -665,24 +668,16 @@ function ScrollRevealHeading({ children, className = "", style = {}, topToBottom
           const previousWordCount = lines
             .slice(0, index)
             .reduce((total, previousLine) => total + String(previousLine).split(" ").length, 0);
-          const totalWords = lines.reduce(
-            (total, currentLine) => total + String(currentLine).split(" ").length,
-            0
-          );
 
           return (
             <span key={index} className="block">
               {words.map((word, wordIndex) => {
                 const globalWordIndex = previousWordCount + wordIndex;
-
-                // One continuous top-to-bottom sequence across every line.
-                // Because this is tied directly to scroll progress, scrolling
-                // upwards automatically reverses the order from bottom to top.
-                const stagger = globalWordIndex * (isMobile ? 0.045 : 0.055);
-                const available = Math.max(0.001, 1 - stagger);
+                const wordStagger = globalWordIndex * (isMobile ? 0.045 : 0.055);
+                const available = Math.max(0.001, 1 - wordStagger);
                 const wordProgress = Math.max(
                   0,
-                  Math.min(1, (progress - stagger) / available)
+                  Math.min(1, (progress - wordStagger) / available)
                 );
 
                 const wordEased = isMobile
@@ -761,7 +756,7 @@ function About() {
                 fontWeight: 600,
               }}
             >
-              {["From Artists to artisans,", "we deliver expert financial", "leadership for the", "creative industries"]}
+              {["From Artists to artisans,", "we deliver expert financial", "leadership for the", "creative industries."]}
             </ScrollRevealHeading>
           </div>
 
@@ -880,7 +875,7 @@ function Experience() {
                 fontWeight: 600,
               }}
             >
-              {["The B-Side: Record Labels,", "Corporate Strategy &", "Global Beats"]}
+              {["The B-Side: Record Labels,", "Corporate Strategy &", "Global Beats."]}
             </ScrollRevealHeading>
 
             <div className="mt-10 md:mt-14 border-t" style={{ color: "#D9DDE3",  color: "#D9DDE3",  color: "#D9DDE3",  borderColor: COLORS.blue }}>
@@ -1486,51 +1481,12 @@ export default function App() {
   return (
     <div
       className="site-root"
-      style={{
-        fontFamily: "'Outfit', sans-serif",
-        background: COLORS.blue,
-        width: "100%",
-        maxWidth: "100vw",
-        overflowX: "hidden",
-      }}
+      style={{ fontFamily: "'Outfit', sans-serif", background: COLORS.blue }}
     >
       <style>{`
-        html,
-        body,
-        #root {
-          width: 100%;
-          max-width: 100%;
-          margin: 0;
-          padding: 0;
-          overflow-x: clip;
-        }
-
-        .site-root {
-          width: 100%;
-          max-width: 100vw;
-          overflow-x: clip;
-        }
-
         @media (max-width: 767px) {
           .hero-line {
-            transition: transform 120ms cubic-bezier(0.22, 1, 0.36, 1) !important;
-          }
-
-          html,
-          body,
-          #root,
-          .site-root {
-            width: 100% !important;
-            max-width: 100vw !important;
-            overflow-x: clip !important;
-          }
-
-          section,
-          nav,
-          footer {
-            width: 100%;
-            max-width: 100vw;
-            box-sizing: border-box;
+            transition: none !important;
           }
         }
 
@@ -1545,26 +1501,6 @@ export default function App() {
           .mobile-safe-nav {
             padding-top: 1rem;
           }
-        }
-
-        .site-root * {
-          box-sizing: border-box;
-        }
-
-        .site-root .md\:col-span-9,
-        .site-root .md\:col-span-8,
-        .site-root .md\:col-span-6,
-        .site-root .md\:col-span-5,
-        .site-root .md\:col-span-4,
-        .site-root .md\:col-span-3 {
-          min-width: 0;
-        }
-
-        .site-root h1,
-        .site-root h2,
-        .site-root h3,
-        .site-root blockquote {
-          max-width: 100%;
         }
 
         /* Small and supporting copy — 13-4016 TPG */
