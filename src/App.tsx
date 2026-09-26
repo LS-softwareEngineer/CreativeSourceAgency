@@ -7,7 +7,7 @@ const COLORS = {
   green: "#F2552C",  // 17-1562 TCX Flame — body text
 };
 
-const NAV_LINKS = ["About", "Experience", "Services", "Testimonials", "Contact"];
+const NAV_LINKS = ["Services", "About", "Experience", "Testimonials", "Contact"];
 
 function Nav() {
   const [open, setOpen] = useState(false);
@@ -23,15 +23,16 @@ function Nav() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 -z-10"
         style={{
-          height: "150px",
+          /*
+           * Clean header fade:
+           * solid Creative Source blue at the top,
+           * gradually fades to complete transparency,
+           * then stays transparent for the bottom part of the layer.
+           * This avoids any visible edge/cut-off line.
+           */
+          height: "220px",
           background:
-            "linear-gradient(to bottom, rgba(0,47,167,0.96) 0%, rgba(0,47,167,0.84) 28%, rgba(0,47,167,0.60) 52%, rgba(0,47,167,0.30) 72%, rgba(0,47,167,0.08) 88%, transparent 100%)",
-          backdropFilter: "blur(18px)",
-          WebkitBackdropFilter: "blur(18px)",
-          maskImage:
-            "linear-gradient(to bottom, black 0%, black 34%, rgba(0,0,0,0.82) 54%, rgba(0,0,0,0.48) 72%, rgba(0,0,0,0.14) 90%, transparent 100%)",
-          WebkitMaskImage:
-            "linear-gradient(to bottom, black 0%, black 34%, rgba(0,0,0,0.82) 54%, rgba(0,0,0,0.48) 72%, rgba(0,0,0,0.14) 90%, transparent 100%)",
+            "linear-gradient(to bottom, rgba(0,47,167,1) 0%, rgba(0,47,167,1) 26%, rgba(0,47,167,0.96) 38%, rgba(0,47,167,0.84) 48%, rgba(0,47,167,0.66) 58%, rgba(0,47,167,0.46) 66%, rgba(0,47,167,0.28) 73%, rgba(0,47,167,0.14) 79%, rgba(0,47,167,0.055) 84%, rgba(0,47,167,0.015) 88%, rgba(0,47,167,0) 92%, rgba(0,47,167,0) 100%)",
         }}
       />
       <div className="flex items-center justify-between">
