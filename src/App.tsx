@@ -232,7 +232,7 @@ function RotatingHeroHeadline() {
           <span
             className="block hero-line hero-line-1"
             style={{
-              "--scroll-x": `${scrollShift * (isMobile ? 18 : 185)}px`,
+              "--scroll-x": `${scrollShift * (isMobile ? 42 : 185)}px`,
             }}
           >
             Financial
@@ -240,7 +240,7 @@ function RotatingHeroHeadline() {
           <span
             className="block hero-line hero-line-2"
             style={{
-              "--scroll-x": `${Math.max(0, (scrollShift - (isMobile ? 0.10 : 0.18)) / (isMobile ? 0.90 : 0.82)) * (isMobile ? 14 : 160)}px`,
+              "--scroll-x": `${Math.max(0, (scrollShift - (isMobile ? 0.10 : 0.18)) / (isMobile ? 0.90 : 0.82)) * (isMobile ? 34 : 160)}px`,
             }}
           >
             clarity for
@@ -248,7 +248,7 @@ function RotatingHeroHeadline() {
           <span
             className="block hero-line hero-line-3"
             style={{
-              "--scroll-x": `${Math.max(0, (scrollShift - (isMobile ? 0.20 : 0.36)) / (isMobile ? 0.80 : 0.64)) * (isMobile ? 10 : 130)}px`,
+              "--scroll-x": `${Math.max(0, (scrollShift - (isMobile ? 0.20 : 0.36)) / (isMobile ? 0.80 : 0.64)) * (isMobile ? 26 : 130)}px`,
             }}
           >
             creatives.
@@ -278,7 +278,7 @@ function RotatingHeroHeadline() {
           <span
             className="block hero-line hero-line-1"
             style={{
-              "--scroll-x": `${scrollShift * (isMobile ? 18 : 185)}px`,
+              "--scroll-x": `${scrollShift * (isMobile ? 42 : 185)}px`,
             }}
           >
             Financial
@@ -286,7 +286,7 @@ function RotatingHeroHeadline() {
           <span
             className="block hero-line hero-line-2"
             style={{
-              "--scroll-x": `${Math.max(0, (scrollShift - (isMobile ? 0.10 : 0.18)) / (isMobile ? 0.90 : 0.82)) * (isMobile ? 14 : 160)}px`,
+              "--scroll-x": `${Math.max(0, (scrollShift - (isMobile ? 0.10 : 0.18)) / (isMobile ? 0.90 : 0.82)) * (isMobile ? 34 : 160)}px`,
             }}
           >
             clarity for
@@ -294,7 +294,7 @@ function RotatingHeroHeadline() {
           <span
             className="block hero-line hero-line-3"
             style={{
-              "--scroll-x": `${Math.max(0, (scrollShift - (isMobile ? 0.20 : 0.36)) / (isMobile ? 0.80 : 0.64)) * (isMobile ? 10 : 130)}px`,
+              "--scroll-x": `${Math.max(0, (scrollShift - (isMobile ? 0.20 : 0.36)) / (isMobile ? 0.80 : 0.64)) * (isMobile ? 26 : 130)}px`,
             }}
           >
             creatives.
@@ -589,52 +589,51 @@ function ScrollRevealHeading({ children, className = "", style = {}, topToBottom
 
   useEffect(() => {
     let frame;
-    let desktopCurrent = 0;
-    let desktopTarget = 0;
+    let current = 0;
+    let target = 0;
+    let mobile = window.innerWidth < 768;
 
-    const update = () => {
+    const calculateTarget = () => {
       if (!ref.current) return;
 
-      const mobile = window.innerWidth < 768;
+      mobile = window.innerWidth < 768;
       setIsMobile(mobile);
 
       const rect = ref.current.getBoundingClientRect();
       const viewport = window.innerHeight;
 
+      const start = mobile ? viewport * 0.92 : viewport * 1.02;
+      const end = mobile ? viewport * 0.54 : viewport * 0.38;
+      const raw = (start - rect.top) / (start - end);
+
+      target = Math.max(0, Math.min(1, raw));
+
+      // Mobile follows the finger closely; desktop eases smoothly.
       if (mobile) {
-        // Start while the heading is still low in the viewport and finish
-        // before it reaches the centre. This keeps the motion subtle and
-        // tightly connected to finger scrolling in both directions.
-        const start = viewport * 0.92;
-        const end = viewport * 0.54;
-        const raw = (start - rect.top) / (start - end);
-        const next = Math.max(0, Math.min(1, raw));
-
-        // Direct progress = no delayed/floaty tracking on phones.
-        setProgress(next);
+        current = target;
+        setProgress(current);
       } else {
-        const start = viewport * 1.02;
-        const end = viewport * 0.38;
-        const raw = (start - rect.top) / (start - end);
-        desktopTarget = Math.max(0, Math.min(1, raw));
-
-        desktopCurrent += (desktopTarget - desktopCurrent) * 0.05;
-        setProgress(desktopCurrent);
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(animate);
       }
     };
 
-    const onScroll = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(update);
+    const animate = () => {
+      current += (target - current) * 0.075;
+      setProgress(current);
+
+      if (Math.abs(target - current) > 0.0008) {
+        frame = requestAnimationFrame(animate);
+      }
     };
 
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    calculateTarget();
+    window.addEventListener("scroll", calculateTarget, { passive: true });
+    window.addEventListener("resize", calculateTarget);
 
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("scroll", calculateTarget);
+      window.removeEventListener("resize", calculateTarget);
       cancelAnimationFrame(frame);
     };
   }, []);
@@ -1502,18 +1501,18 @@ export default function App() {
           max-width: 100%;
           margin: 0;
           padding: 0;
-          overflow-x: hidden;
+          overflow-x: clip;
         }
 
         .site-root {
           width: 100%;
           max-width: 100vw;
-          overflow-x: hidden;
+          overflow-x: clip;
         }
 
         @media (max-width: 767px) {
           .hero-line {
-            transition: none !important;
+            transition: transform 120ms cubic-bezier(0.22, 1, 0.36, 1) !important;
           }
 
           html,
@@ -1522,7 +1521,7 @@ export default function App() {
           .site-root {
             width: 100% !important;
             max-width: 100vw !important;
-            overflow-x: hidden !important;
+            overflow-x: clip !important;
           }
 
           section,
