@@ -62,7 +62,7 @@ function Nav() {
         </ul>
 
         <button
-          className="md:hidden flex flex-col gap-1.5 p-2"
+          className="mobile-menu-toggle md:hidden flex flex-col gap-1.5 p-2"
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
         >
@@ -1478,6 +1478,10 @@ function Footer() {
 }
 
 export default function App() {
+  useEffect(() => {
+    document.title = "Creative Source Agency";
+  }, []);
+
   return (
     <div
       className="site-root"
@@ -1488,12 +1492,26 @@ export default function App() {
           .hero-line {
             transition: none !important;
           }
+
+          /* Keep the hero headline fully inside every mobile viewport. */
+          #top h1 {
+            font-size: clamp(3.25rem, 18vw, 4.7rem) !important;
+            letter-spacing: -0.075em !important;
+          }
         }
 
         /* Mobile camera / notch clearance */
         @media (max-width: 767px) {
           .mobile-safe-nav {
             padding-top: max(2.25rem, calc(env(safe-area-inset-top, 0px) + 1rem));
+          }
+
+          /* Keep the mobile menu icon pinned to the visible top-right of every mobile viewport. */
+          .mobile-menu-toggle {
+            position: fixed;
+            top: max(2.25rem, calc(env(safe-area-inset-top, 0px) + 1rem));
+            right: 1.25rem;
+            z-index: 60;
           }
         }
 
