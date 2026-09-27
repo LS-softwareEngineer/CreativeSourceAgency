@@ -62,7 +62,7 @@ function Nav() {
         </ul>
 
         <button
-          className="mobile-menu-toggle md:hidden flex flex-col gap-1.5 p-2"
+          className="md:hidden flex flex-col gap-1.5 p-2"
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
         >
@@ -1492,25 +1492,37 @@ export default function App() {
           .hero-line {
             transition: none !important;
           }
-
-          /* Keep the hero headline fully inside every mobile viewport. */
-          #top h1 {
-            font-size: clamp(3.25rem, 18vw, 4.7rem) !important;
-            letter-spacing: -0.075em !important;
-          }
         }
 
         /* Mobile camera / notch clearance */
         @media (max-width: 767px) {
+          html,
+          body,
+          #root {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            overflow-x: hidden;
+          }
+
+          .site-root {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+          }
+
           .mobile-safe-nav {
+            width: 100%;
+            max-width: 100vw;
+            left: 0;
+            right: 0;
             padding-top: max(2.25rem, calc(env(safe-area-inset-top, 0px) + 1rem));
           }
 
-          /* Keep the mobile menu icon pinned to the visible top-right of every mobile viewport. */
           .mobile-menu-toggle {
             position: fixed;
             top: max(2.25rem, calc(env(safe-area-inset-top, 0px) + 1rem));
-            right: 1.25rem;
+            right: max(1.25rem, env(safe-area-inset-right, 0px));
             z-index: 60;
           }
         }
