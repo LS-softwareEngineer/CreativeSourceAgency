@@ -7,7 +7,7 @@ const COLORS = {
   green: "#F2552C",  // 17-1562 TCX Flame — body text
 };
 
-const NAV_LINKS = ["About", "Experience", "Services", "Testimonials", "Contact"];
+const NAV_LINKS = ["Services", "About", "Experience", "Testimonials", "Contact"];
 
 function Nav() {
   const [open, setOpen] = useState(false);
@@ -108,36 +108,44 @@ function RotatingHeroHeadline() {
   const LENS_RADIUS = 205;
 
   useEffect(() => {
-    let frameId;
+    let frameId = null;
 
     const update = () => {
       const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
+      const scrollTop = Math.max(
+        window.scrollY,
+        document.documentElement.scrollTop,
+        document.body.scrollTop,
+      );
 
-      if (mobile) {
-        // On mobile, track the user's finger scroll directly with no lag.
-        // The hero starts fully aligned and each line drifts right independently.
-        const progress = Math.max(0, Math.min(1, window.scrollY / 300));
-        setScrollShift(progress);
-      } else {
-        // Keep desktop behaviour unchanged.
-        setScrollShift(Math.min(window.scrollY / 360, 1));
-      }
+      setIsMobile(mobile);
+      setScrollShift(Math.max(0, Math.min(1, scrollTop / 360)));
     };
 
     const handleScroll = () => {
-      cancelAnimationFrame(frameId);
-      frameId = requestAnimationFrame(update);
+      if (frameId !== null) return;
+
+      frameId = requestAnimationFrame(() => {
+        frameId = null;
+        update();
+      });
     };
 
     update();
     window.addEventListener("scroll", handleScroll, { passive: true });
+    document.addEventListener("scroll", handleScroll, {
+      passive: true,
+      capture: true,
+    });
+    window.addEventListener("touchmove", handleScroll, { passive: true });
     window.addEventListener("resize", handleScroll);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("scroll", handleScroll, true);
+      window.removeEventListener("touchmove", handleScroll);
       window.removeEventListener("resize", handleScroll);
-      cancelAnimationFrame(frameId);
+      if (frameId !== null) cancelAnimationFrame(frameId);
     };
   }, []);
 
@@ -164,7 +172,9 @@ function RotatingHeroHeadline() {
   };
 
   const headlineStyle = {
-    fontSize: "clamp(4.7rem, 13vw, 13rem)",
+    fontSize: isMobile
+      ? "clamp(3.35rem, 16.5vw, 4.3rem)"
+      : "clamp(4.7rem, 13vw, 13rem)",
     fontWeight: 700,
     marginLeft: 0,
     paddingLeft: 0,
@@ -230,28 +240,28 @@ function RotatingHeroHeadline() {
           }}
         >
           <span
-            className="block hero-line hero-line-1"
+            className="block hero-scroll-line"
             style={{
-              "--scroll-x": `${scrollShift * (isMobile ? 42 : 185)}px`,
+              transform: `translate3d(${scrollShift * 185}px, 0, 0)`,
             }}
           >
-            Financial
+            <span className="block hero-line hero-line-1">Financial</span>
           </span>
           <span
-            className="block hero-line hero-line-2"
+            className="block hero-scroll-line"
             style={{
-              "--scroll-x": `${Math.max(0, (scrollShift - (isMobile ? 0.10 : 0.18)) / (isMobile ? 0.90 : 0.82)) * (isMobile ? 34 : 160)}px`,
+              transform: `translate3d(${Math.max(0, (scrollShift - 0.18) / 0.82) * 160}px, 0, 0)`,
             }}
           >
-            clarity for
+            <span className="block hero-line hero-line-2">clarity for</span>
           </span>
           <span
-            className="block hero-line hero-line-3"
+            className="block hero-scroll-line"
             style={{
-              "--scroll-x": `${Math.max(0, (scrollShift - (isMobile ? 0.20 : 0.36)) / (isMobile ? 0.80 : 0.64)) * (isMobile ? 26 : 130)}px`,
+              transform: `translate3d(${Math.max(0, (scrollShift - 0.36) / 0.64) * 130}px, 0, 0)`,
             }}
           >
-            creatives.
+            <span className="block hero-line hero-line-3">creatives.</span>
           </span>
         </h1>
 
@@ -276,40 +286,43 @@ function RotatingHeroHeadline() {
           }}
         >
           <span
-            className="block hero-line hero-line-1"
+            className="block hero-scroll-line"
             style={{
-              "--scroll-x": `${scrollShift * (isMobile ? 42 : 185)}px`,
+              transform: `translate3d(${scrollShift * 185}px, 0, 0)`,
             }}
           >
-            Financial
+            <span className="block hero-line hero-line-1">Financial</span>
           </span>
           <span
-            className="block hero-line hero-line-2"
+            className="block hero-scroll-line"
             style={{
-              "--scroll-x": `${Math.max(0, (scrollShift - (isMobile ? 0.10 : 0.18)) / (isMobile ? 0.90 : 0.82)) * (isMobile ? 34 : 160)}px`,
+              transform: `translate3d(${Math.max(0, (scrollShift - 0.18) / 0.82) * 160}px, 0, 0)`,
             }}
           >
-            clarity for
+            <span className="block hero-line hero-line-2">clarity for</span>
           </span>
           <span
-            className="block hero-line hero-line-3"
+            className="block hero-scroll-line"
             style={{
-              "--scroll-x": `${Math.max(0, (scrollShift - (isMobile ? 0.20 : 0.36)) / (isMobile ? 0.80 : 0.64)) * (isMobile ? 26 : 130)}px`,
+              transform: `translate3d(${Math.max(0, (scrollShift - 0.36) / 0.64) * 130}px, 0, 0)`,
             }}
           >
-            creatives.
+            <span className="block hero-line hero-line-3">creatives.</span>
           </span>
         </h1>
       </div>
 
       <style>{`
+        .hero-scroll-line {
+          will-change: transform;
+          transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
         .hero-line {
-          --scroll-x: 0px;
           opacity: 0;
-          transform: translateX(calc(82px + var(--scroll-x)));
+          transform: translateX(82px);
           animation: heroLineIn 680ms cubic-bezier(0.18, 0.86, 0.3, 1) forwards;
           will-change: transform, opacity;
-          transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .hero-line-1 {
@@ -327,11 +340,11 @@ function RotatingHeroHeadline() {
         @keyframes heroLineIn {
           0% {
             opacity: 0;
-            transform: translateX(calc(82px + var(--scroll-x)));
+            transform: translateX(82px);
           }
           100% {
             opacity: 1;
-            transform: translateX(var(--scroll-x));
+            transform: translateX(0);
           }
         }
       `}</style>
@@ -367,71 +380,48 @@ function Hero() {
 }
 
 
-function FloatingServiceCircles() {
-  const sectionRef = useRef(null);
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    let frame;
-
-    const update = () => {
-      if (!sectionRef.current) return;
-
-      const rect = sectionRef.current.getBoundingClientRect();
-      const viewport = window.innerHeight;
-
-      // Scroll-linked only: movement follows scrolling down and reverses
-      // naturally when scrolling back up.
-      const start = viewport * 0.95;
-      const end = -rect.height * 0.35;
-      const raw = (start - rect.top) / (start - end);
-
-      setProgress(Math.max(0, Math.min(1, raw)));
-    };
-
-    const onScroll = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(update);
-    };
-
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      cancelAnimationFrame(frame);
-    };
-  }, []);
-
-  const items = [
-    ["Royalty Recording &", "Income Tracking"],
-    ["Fractional Financial", "Controller"],
-    ["General", "Bookkeeping"],
-    ["Making Tax", "Digital"],
-    ["Payroll &", "Compliance"],
-    ["Management", "Accounts"],
-  ];
-
-  const positions = [
-    { x: -26, y: -10, r: -5, scale: 1.00 },
-    { x: 20,  y: 18,  r: 4,  scale: 1.08 },
-    { x: -14, y: 26,  r: -3, scale: 0.96 },
-    { x: 24,  y: -18, r: 5,  scale: 1.02 },
-    { x: -20, y: 14,  r: 3,  scale: 1.06 },
-    { x: 16,  y: -24, r: -4, scale: 0.98 },
+function ServiceOverview() {
+  const services = [
+    {
+      title: "Royalty Reporting & Income Tracking",
+      description:
+        "We precisely monitor your creative and intellectual property revenue, ensuring you receive every penny earned while delivering clear, compliance-ready royalty statements.",
+    },
+    {
+      title: "Fractional Financial Controller",
+      description:
+        "Gain strategic, high-level financial oversight and expert guidance to optimize your cash flow, budgeting, and growth without the cost of a full-time executive.",
+    },
+    {
+      title: "General Bookkeeping",
+      description:
+        "We keep your daily financial transactions perfectly organized, balancing your ledgers and tracking receipts so your business records remain flawless and up to date.",
+    },
+    {
+      title: "Management Accounting",
+      description:
+        "Receive bespoke, regular financial insights and performance analysis that empower you to make confident, data-driven decisions for the future of your business.",
+    },
+    {
+      title: "Payroll & Compliance",
+      description:
+        "We manage your complete payroll cycle, ensuring accurate employee pay, timely pension contributions, and seamless HMRC compliance every single month.",
+    },
+    {
+      title: "Tax Returns & Making Tax Digital",
+      description:
+        "Our team simplifies your corporate or personal tax filings while keeping your business fully compliant with the latest UK Making Tax Digital regulations.",
+    },
   ];
 
   return (
     <section
-      ref={sectionRef}
       id="services"
-      className="px-5 md:px-10 pt-10 md:pt-14 pb-2 md:pb-2 overflow-hidden"
+      className="px-5 md:px-10 pt-10 md:pt-14 pb-2 md:pb-2"
       style={{ background: COLORS.blue }}
     >
       <div
-        className="grid md:grid-cols-12 gap-8 border-t pt-6 mb-8 md:mb-12"
+        className="grid md:grid-cols-12 gap-8 border-t pt-6"
         style={{ borderColor: "#F2552C" }}
       >
         <div className="md:col-span-2">
@@ -442,47 +432,37 @@ function FloatingServiceCircles() {
             01 / Services
           </p>
         </div>
-
-        <div className="md:col-span-10">
-          <ScrollRevealHeading
-            className="leading-[0.92] tracking-[-0.04em]"
-            style={{
-              color: "#F2552C",
-              fontSize: "clamp(3.8rem, 9vw, 9rem)",
-              fontWeight: 600,
-            }}
-          >
-            {["What We Do."]}
-          </ScrollRevealHeading>
-        </div>
       </div>
 
-      <div className="organic-service-grid max-w-7xl mx-auto">
-        {items.map(([line1, line2], index) => {
-          const p = positions[index];
-          const phase = progress * Math.PI * 2 + index * 0.85;
-
-          const scrollX = p.x * progress + Math.sin(phase) * 7;
-          const scrollY = p.y * progress + Math.cos(phase * 0.9) * 6;
-          const rotate = p.r * progress + Math.sin(phase * 0.7) * 1.5;
-
-          return (
-            <div
-              key={`${line1}-${line2}`}
-              className={`organic-service-circle organic-service-circle-${index + 1}`}
-              style={{
-                transform: `translate3d(${scrollX}px, ${scrollY}px, 0) rotate(${rotate}deg) scale(${p.scale})`,
-              }}
-            >
-              <span>
-                {line1}
-                <br />
-                {line2}
-                <span className="ml-1 inline-block">↗</span>
-              </span>
-            </div>
-          );
-        })}
+      <div className="mt-12 md:mt-20 grid md:grid-cols-12 gap-8 md:gap-12">
+        <div className="md:col-start-4 md:col-span-9">
+          <div>
+            {services.map((service) => (
+              <div
+                key={service.title}
+                className="grid md:grid-cols-9 gap-4 md:gap-8 py-7 md:py-9 border-b last:border-b-0"
+                style={{ borderColor: "#F2552C" }}
+              >
+                <div className="md:col-span-3">
+                  <h3
+                    className="text-xl md:text-2xl font-semibold leading-tight"
+                    style={{ color: COLORS.sonic }}
+                  >
+                    {service.title}
+                  </h3>
+                </div>
+                <div className="md:col-span-6">
+                  <p
+                    className="text-sm md:text-base leading-relaxed"
+                    style={{ color: COLORS.sonic }}
+                  >
+                    {service.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div
@@ -508,76 +488,6 @@ function FloatingServiceCircles() {
           ))}
         </div>
       </div>
-
-      <style>{`
-        .organic-service-grid {
-          display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          align-items: center;
-          justify-items: center;
-          width: min(100%, 760px);
-          min-height: 0;
-          margin: 0 auto;
-          column-gap: 0;
-          row-gap: 0;
-          padding: 0.75rem 0 1.5rem;
-        }
-
-        .organic-service-circle {
-          width: clamp(155px, 17vw, 210px);
-          aspect-ratio: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          padding: 1.25rem;
-          background: #F2552C;
-          color: #D9DDE3;
-          text-transform: uppercase;
-          font-size: clamp(0.68rem, 0.95vw, 0.9rem);
-          line-height: 1.25;
-          letter-spacing: 0.03em;
-          font-weight: 500;
-          will-change: transform;
-          transition: transform 90ms linear;
-        }
-
-        /* Three circles on the first row and three on the second,
-           with a small amount of overlap like the reference image. */
-        .organic-service-circle-1 { grid-column: 1; grid-row: 1; justify-self: end; margin-right: -20px; border-radius: 47% 53% 51% 49% / 44% 48% 52% 56%; }
-        .organic-service-circle-2 { grid-column: 2; grid-row: 1; margin-left: -16px; margin-right: -16px; border-radius: 54% 46% 49% 51% / 50% 43% 57% 50%; }
-        .organic-service-circle-3 { grid-column: 3; grid-row: 1; justify-self: start; margin-left: -20px; border-radius: 45% 55% 53% 47% / 56% 49% 51% 44%; }
-        .organic-service-circle-4 { grid-column: 1; grid-row: 2; justify-self: end; margin-right: -20px; margin-top: -24px; border-radius: 52% 48% 44% 56% / 47% 55% 45% 53%; }
-        .organic-service-circle-5 { grid-column: 2; grid-row: 2; margin-left: -16px; margin-right: -16px; margin-top: -24px; border-radius: 48% 52% 56% 44% / 53% 46% 54% 47%; }
-        .organic-service-circle-6 { grid-column: 3; grid-row: 2; justify-self: start; margin-left: -20px; margin-top: -24px; border-radius: 55% 45% 47% 53% / 45% 52% 48% 55%; }
-
-        @media (max-width: 767px) {
-          .organic-service-grid {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            width: 100%;
-            padding: 0.5rem 0 1rem;
-          }
-
-          .organic-service-circle {
-            width: min(34vw, 132px);
-            font-size: clamp(0.48rem, 2.25vw, 0.62rem);
-            padding: 0.65rem;
-          }
-
-          .organic-service-circle-1 { grid-column: 1; grid-row: 1; justify-self: end; margin-right: -10px; }
-          .organic-service-circle-2 { grid-column: 2; grid-row: 1; justify-self: center; margin-left: -8px; margin-right: -8px; }
-          .organic-service-circle-3 { grid-column: 3; grid-row: 1; justify-self: start; margin-left: -10px; }
-          .organic-service-circle-4 { grid-column: 1; grid-row: 2; justify-self: end; margin-right: -10px; margin-top: -16px; }
-          .organic-service-circle-5 { grid-column: 2; grid-row: 2; justify-self: center; margin-left: -8px; margin-right: -8px; margin-top: -16px; }
-          .organic-service-circle-6 { grid-column: 3; grid-row: 2; justify-self: start; margin-left: -10px; margin-top: -16px; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .organic-service-circle {
-            transition: none;
-          }
-        }
-      `}</style>
     </section>
   );
 }
@@ -585,13 +495,12 @@ function FloatingServiceCircles() {
 function ScrollRevealHeading({ children, className = "", style = {}, topToBottom = false, independentWords = false }) {
   const ref = useRef(null);
   const [progress, setProgress] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    let frame;
+    let frame = null;
+    let isAnimating = false;
     let current = 0;
     let target = 0;
-    let mobile = window.innerWidth < 768;
 
     const animate = () => {
       current += (target - current) * 0.09;
@@ -602,44 +511,47 @@ function ScrollRevealHeading({ children, className = "", style = {}, topToBottom
       } else {
         current = target;
         setProgress(target);
+        frame = null;
+        isAnimating = false;
       }
+    };
+
+    const startAnimation = () => {
+      if (isAnimating) return;
+
+      isAnimating = true;
+      frame = requestAnimationFrame(animate);
     };
 
     const calculateTarget = () => {
       if (!ref.current) return;
 
-      mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-
       const rect = ref.current.getBoundingClientRect();
       const viewport = window.innerHeight;
 
-      const start = mobile ? viewport * 0.92 : viewport * 1.02;
-      const end = mobile ? viewport * 0.54 : viewport * 0.38;
+      const start = viewport * 1.02;
+      const end = viewport * 0.38;
       const raw = (start - rect.top) / (start - end);
       target = Math.max(0, Math.min(1, raw));
 
-      cancelAnimationFrame(frame);
-
-      if (mobile) {
-        // Keep mobile directly linked to finger scrolling.
-        current = target;
-        setProgress(target);
-      } else {
-        // Keep animating after the scroll event ends so the heading actually
-        // reaches its target position instead of moving only one tiny step.
-        frame = requestAnimationFrame(animate);
-      }
+      startAnimation();
     };
 
     calculateTarget();
     window.addEventListener("scroll", calculateTarget, { passive: true });
+    document.addEventListener("scroll", calculateTarget, {
+      passive: true,
+      capture: true,
+    });
+    window.addEventListener("touchmove", calculateTarget, { passive: true });
     window.addEventListener("resize", calculateTarget);
 
     return () => {
       window.removeEventListener("scroll", calculateTarget);
+      document.removeEventListener("scroll", calculateTarget, true);
+      window.removeEventListener("touchmove", calculateTarget);
       window.removeEventListener("resize", calculateTarget);
-      cancelAnimationFrame(frame);
+      if (frame !== null) cancelAnimationFrame(frame);
     };
   }, []);
 
@@ -648,20 +560,18 @@ function ScrollRevealHeading({ children, className = "", style = {}, topToBottom
   return (
     <h2 ref={ref} className={className} style={style}>
       {lines.map((line, index) => {
-        const stagger = index * (isMobile ? 0.11 : 0.18);
+        const stagger = index * 0.18;
         const lineProgress = Math.max(
           0,
           Math.min(1, (progress - stagger) / (1 - stagger))
         );
 
-        const eased = isMobile
-          ? lineProgress * lineProgress * (3 - 2 * lineProgress)
-          : lineProgress < 0.5
-            ? 4 * lineProgress * lineProgress * lineProgress
-            : 1 - Math.pow(-2 * lineProgress + 2, 3) / 2;
+        const eased = lineProgress < 0.5
+          ? 4 * lineProgress * lineProgress * lineProgress
+          : 1 - Math.pow(-2 * lineProgress + 2, 3) / 2;
 
-        const x = topToBottom ? 0 : (1 - eased) * (isMobile ? 26 : 54);
-        const y = topToBottom ? (1 - eased) * (isMobile ? -22 : -42) : 0;
+        const x = topToBottom ? 0 : (1 - eased) * 54;
+        const y = topToBottom ? (1 - eased) * -42 : 0;
 
         if (independentWords) {
           const words = String(line).split(" ");
@@ -673,20 +583,18 @@ function ScrollRevealHeading({ children, className = "", style = {}, topToBottom
             <span key={index} className="block">
               {words.map((word, wordIndex) => {
                 const globalWordIndex = previousWordCount + wordIndex;
-                const wordStagger = globalWordIndex * (isMobile ? 0.045 : 0.055);
+                const wordStagger = globalWordIndex * 0.055;
                 const available = Math.max(0.001, 1 - wordStagger);
                 const wordProgress = Math.max(
                   0,
                   Math.min(1, (progress - wordStagger) / available)
                 );
 
-                const wordEased = isMobile
-                  ? wordProgress * wordProgress * (3 - 2 * wordProgress)
-                  : wordProgress < 0.5
-                    ? 4 * wordProgress * wordProgress * wordProgress
-                    : 1 - Math.pow(-2 * wordProgress + 2, 3) / 2;
+                const wordEased = wordProgress < 0.5
+                  ? 4 * wordProgress * wordProgress * wordProgress
+                  : 1 - Math.pow(-2 * wordProgress + 2, 3) / 2;
 
-                const wordX = (1 - wordEased) * (isMobile ? 30 : 58);
+                const wordX = (1 - wordEased) * 58;
 
                 return (
                   <span
@@ -792,19 +700,16 @@ function About() {
 
 const highlights = [
   {
-    number: "01",
     company: "Republic of Music",
     role: "Financial Controller — 14 Years",
     text: "Built and led a dedicated four-person team managing monthly reporting for over 1,000 labels, semi-annual artist royalty statements for more than 700 licensees, and comprehensive monthly management accounts.",
   },
   {
-    number: "02",
     company: "Defected Records, RAM Records & Breakbeat Kaos",
     role: "Royalty Accounting",
     text: "Provided accurate, time-critical artist royalty accounting and built robust monthly management accounts to keep these iconic labels moving forward.",
   },
   {
-    number: "03",
     company: "Play It Again Sam",
     role: "Specialist Project Accountant",
     text: "Handled intricate royalty reporting and successfully integrated financial systems for a mobile/ringtone subsidiary.",
@@ -842,10 +747,7 @@ function Experience() {
             className="grid md:grid-cols-12 gap-6 md:gap-8 py-8 md:py-10 border-b"
             style={{ borderColor: COLORS.blue }}
           >
-            <div className="md:col-span-1 text-sm" style={{ color: "#002FA7" }}>
-              {item.number}
-            </div>
-            <div className="md:col-span-4">
+            <div className="md:col-span-5">
               <h3 className="text-2xl md:text-4xl leading-tight font-semibold" style={{ color: COLORS.blue }}>
                 {item.company}
               </h3>
@@ -883,7 +785,7 @@ function Experience() {
               style={{ color: "#D9DDE3", borderColor: COLORS.blue }}
             >
               {[
-                ["Bouygues", "Accelerated through a six-year corporate trajectory from purchase ledger clerk to senior business analyst."],
+                ["Bouygues", "Accelerated through a six-year corporate trajectory from clerk to senior business analyst."],
                 ["Cross-Sector Finance", "Adapted accounting expertise across local government, non-profits, and luxury jewellery distribution."],
                 ["Matrix Records", "Steered financial operations and co-managed label logistics alongside co-founder Crispin Glover. Self-distributed vinyl directly to West End record shops."],
               ].map(([title, copy]) => (
@@ -904,7 +806,7 @@ function Experience() {
   );
 }
 
-const services = [
+const legacyServices = [
   ["01", "Royalty Income Tracking & Reporting", "Ensuring every stream, download and physical sale is accurately accounted for."],
   ["02", "Fractional Financial Controller", "Senior-level financial oversight tailored to the scale and needs of your business."],
   ["03", "Management Accounts", "Monthly insight into profitability, cash flow and the numbers that matter most."],
@@ -913,7 +815,7 @@ const services = [
   ["06", "Making Tax Digital & Tax Returns", "Straightforward HMRC compliance to keep your business fully up to date."],
 ];
 
-function Services() {
+function LegacyServices() {
   return (
     <section id="services" className="px-5 md:px-10 pt-24 md:pt-36 pb-8 md:pb-10" style={{ background: COLORS.blue }}>
       <div className="grid md:grid-cols-12 gap-8 border-t pt-6" style={{ borderColor: "#F2552C" }}>
@@ -940,7 +842,7 @@ function Services() {
         className="mt-20 md:mt-28 grid grid-cols-2 lg:grid-cols-3 border-t border-l"
         style={{ borderColor: "#F2552C" }}
       >
-        {services.map(([number, title, desc]) => (
+        {legacyServices.map(([number, title, desc]) => (
           <div
             key={number}
             className="service-card group min-h-[160px] md:min-h-[300px] p-4 md:p-8 border-r border-b flex flex-col"
@@ -1491,12 +1393,6 @@ export default function App() {
       style={{ fontFamily: "'Outfit', sans-serif", background: COLORS.blue }}
     >
       <style>{`
-        @media (max-width: 767px) {
-          .hero-line {
-            transition: none !important;
-          }
-        }
-
         /* Mobile camera / notch clearance */
         @media (max-width: 767px) {
           html,
@@ -1542,7 +1438,7 @@ export default function App() {
         .site-root li,
         .site-root button,
         .site-root footer div,
-        .site-root section span:not(.hero-line) {
+        .site-root section span:not(.hero-line):not(.hero-scroll-line) {
           color: #D9DDE3;
         }
 
@@ -1603,7 +1499,7 @@ export default function App() {
       `}</style>
       <Nav />
       <Hero />
-      <FloatingServiceCircles />
+      <ServiceOverview />
       <About />
       <Experience />
       <Testimonials />
