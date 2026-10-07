@@ -477,7 +477,7 @@ function ServiceOverview() {
             Tools:
           </span>
 
-          {["SR1", "Curve", "Sage", "Xero", "Microsoft Excel"].map((tool) => (
+          {["SR1", "Curve", "Sage", "Xero", "Excel"].map((tool) => (
             <span
               key={tool}
               className="uppercase text-[8px] sm:text-[9px] md:text-sm font-semibold shrink-0"
