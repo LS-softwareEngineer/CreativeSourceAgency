@@ -7,4 +7,7 @@
     "addBypassLinks": false,
     "ignoreReducedMotion": false
   }
+  "icons": {
+  "icon": "/logo.png"
+}
 }
