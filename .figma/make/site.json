@@ -1,10 +1,14 @@
 {
-  "description": "This vibrant platform offers expert financial leadership and royalty accounting tailored for the music industry, ensuring accurate tracking and insightful reporting for record labels and distributors.",
+  "title": "Creative Source Agency",
+  "description": "Creative Source Agency provides expert financial leadership, royalty accounting and financial services for the creative industries.",
   "robots": {
-    "index": false
+    "index": true
   },
   "accessibility": {
     "addBypassLinks": false,
     "ignoreReducedMotion": false
+  },
+  "icons": {
+    "icon": "/favicon.png"
   }
 }

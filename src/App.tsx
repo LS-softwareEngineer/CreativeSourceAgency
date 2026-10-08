@@ -477,7 +477,7 @@ function ServiceOverview() {
             Tools:
           </span>
 
-          {["SR1", "Curve", "Sage", "Xero", "Microsoft Excel"].map((tool) => (
+          {["SR1", "Curve", "Sage", "Xero", "Excel"].map((tool) => (
             <span
               key={tool}
               className="uppercase text-[8px] sm:text-[9px] md:text-sm font-semibold shrink-0"
@@ -664,12 +664,7 @@ function About() {
                 fontWeight: 600,
               }}
             >
-              {[
-                "From artists to artisans,",
-                "musicians to makers,",
-                "we deliver expert financial",
-                "leadership for the creative industries.",
-              ]}
+              {["From Artists to artisans,", "we deliver expert financial", "leadership for the", "creative industries."]}
             </ScrollRevealHeading>
           </div>
 
@@ -726,7 +721,7 @@ function Experience() {
     <section id="experience" className="px-5 md:px-10 pt-24 md:pt-36 pb-2 md:pb-4" style={{ background: COLORS.green }}>
       <div className="grid md:grid-cols-12 gap-8 border-t pt-6" style={{ borderColor: COLORS.blue }}>
         <div className="md:col-span-3">
-          <p className="uppercase text-xs" style={{ color: COLORS.sonic, letterSpacing: "0.1em" }}>
+          <p className="uppercase text-xs" style={{ color: COLORS.blue, letterSpacing: "0.1em" }}>
             03 / Experience
           </p>
         </div>
@@ -735,7 +730,7 @@ function Experience() {
             independentWords
             className="leading-[0.92] tracking-[-0.04em] max-w-5xl"
             style={{
-              color: COLORS.sonic,
+              color: COLORS.blue,
               fontSize: "clamp(3rem, 7.5vw, 7.5rem)",
               fontWeight: 600,
             }}
@@ -753,17 +748,17 @@ function Experience() {
             style={{ borderColor: COLORS.blue }}
           >
             <div className="md:col-span-5">
-              <h3 className="text-2xl md:text-4xl leading-tight font-semibold" style={{ color: COLORS.sonic }}>
+              <h3 className="text-2xl md:text-4xl leading-tight font-semibold" style={{ color: COLORS.blue }}>
                 {item.company}
               </h3>
             </div>
             <div className="md:col-span-3">
-              <p className="uppercase text-xs leading-relaxed" style={{ color: COLORS.sonic, letterSpacing: "0.08em" }}>
+              <p className="uppercase text-xs leading-relaxed" style={{ color: COLORS.blue, letterSpacing: "0.08em" }}>
                 {item.role}
               </p>
             </div>
             <div className="md:col-span-4">
-              <p className="leading-relaxed text-sm md:text-base" style={{ color: COLORS.sonic }}>
+              <p className="leading-relaxed text-sm md:text-base" style={{ color: COLORS.blue }}>
                 {item.text}
               </p>
             </div>
@@ -796,7 +791,7 @@ function Experience() {
               ].map(([title, copy]) => (
                 <div key={title} className="grid md:grid-cols-9 gap-4 md:gap-8 py-6 md:py-8" style={{ borderColor: COLORS.blue }}>
                   <div className="md:col-span-3">
-                    <h4 className="text-xl md:text-2xl font-semibold" style={{ color: COLORS.sonic }}>{title}</h4>
+                    <h4 className="text-xl md:text-2xl font-semibold" style={{ color: COLORS.blue }}>{title}</h4>
                   </div>
                   <div className="md:col-span-6">
                     <p className="text-sm md:text-base leading-relaxed" style={{ color: "#D9DDE3" }}>{copy}</p>
@@ -1420,10 +1415,7 @@ export default function App() {
             max-width: 100vw;
             left: 0;
             right: 0;
-            padding-top: max(
-              0.75rem,
-              calc(env(safe-area-inset-top, 0px) - 1rem)
-            );
+            padding-top: max(2.25rem, calc(env(safe-area-inset-top, 0px) + 1rem));
           }
 
           .mobile-menu-toggle {
@@ -1472,12 +1464,8 @@ export default function App() {
           color: #F2552C !important;
         }
 
-        /* Experience typography uses the light blue contrast colour. */
-        #experience h2 {
-          color: #D9DDE3 !important;
-        }
-
-        /* Main headings on light contrasting sections — #002FA7 */
+        /* Main headings on burgundy / light contrasting sections — #002FA7 */
+        #experience h2,
         #testimonials blockquote {
           color: #002FA7 !important;
         }
